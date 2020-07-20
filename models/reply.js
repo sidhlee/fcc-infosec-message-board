@@ -9,5 +9,5 @@ const ReplySchema = new mongoose.Schema({
 
 module.exports = {
   ReplySchema,
-  Reply: mongoose.model('Replay', ReplySchema),
+  Reply: mongoose.model('Reply', ReplySchema),
 };

@@ -27,7 +27,7 @@
     $(function () {
       var currentURL = window.location.pathname.slice(3);
       currentURL = currentURL.split('/');
-
+      console.log(currentURL);
       var url = "/api/replies/" + currentURL[0];
       $('#threadTitle').text(window.location.pathname);
       $.ajax({
@@ -98,7 +98,10 @@
           type: "DELETE",
           url: url,
           data: $(this).serialize(),
-          success: function (data) { alert(data) }
+          success: function (data) {
+            alert(data);
+            location.reload();
+          }
         });
         e.preventDefault();
       });
@@ -108,7 +111,10 @@
           type: "DELETE",
           url: url,
           data: $(this).serialize(),
-          success: function (data) { alert(data) }
+          success: function (data) {
+            alert(data);
+            location.reload();
+          }
         });
         e.preventDefault();
       });

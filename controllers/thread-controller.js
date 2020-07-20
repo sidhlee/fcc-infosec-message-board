@@ -1,19 +1,7 @@
 require('dotenv').config();
 
 const mongoose = require('mongoose');
-const { ThreadSchema } = require('../models/thread.js');
-const DB_URI = process.env.DB_URI;
-
-/**
- * Returns mongoose model from req.param.board
- * @param {Request} req
- */
-const getBoard = (req) => {
-  const board = req.params.board;
-  // model(name, schema, collection)
-  const Board = mongoose.model('Thread', ThreadSchema, board);
-  return Board;
-};
+const { getBoard } = require('../helpers/getBoard');
 
 const getThreads = async (req, res, next) => {
   const Board = getBoard(req);
@@ -24,6 +12,7 @@ const getThreads = async (req, res, next) => {
       )
       .sort({ bumped_on: -1 })
       .limit(10)
+      .lean() // return plain JS object instead of mongoose model
       .exec(); // .toArray in native driver
     // NOTE: Mongoose Queries are not Promises!
     // https://mongoosejs.com/docs/queries.html#queries-are-not-promises
@@ -65,7 +54,7 @@ const reportThread = async (req, res, next) => {
   const threadId = req.body.report_id;
   try {
     const reportedThread = await Board.findByIdAndUpdate(
-      mongoose.Types.ObjectId(threadId),
+      threadId,
       {
         reported: true,
       },
@@ -93,7 +82,7 @@ const deleteThread = async (req, res, next) => {
   try {
     // https://mongoosejs.com/docs/api.html#model_Model.findOneAndDelete
     const deleted = await Board.findOneAndDelete({
-      _id: mongoose.Types.ObjectId(threadId),
+      _id: threadId, // mongoose wraps id with ObjectID automatically
       delete_password: deletePassword,
     });
     if (deleted) {
