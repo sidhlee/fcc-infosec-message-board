@@ -12,7 +12,7 @@
     "ecmaVersion": 11
   },
   "rules": {
-    "prettier/prettier": ["warn", { "singleQuote": true }],
+    "prettier/prettier": "warn",
     "no-unused-vars": "warn"
   }
 }
