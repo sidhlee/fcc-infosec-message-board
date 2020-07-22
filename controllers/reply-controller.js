@@ -64,6 +64,9 @@ const reportReply = async (req, res, next) => {
         'replies._id': reply_id,
       },
       {
+        // The positional $ operator identifies an element in an array
+        // to update without explicitly specifying the position of the element in the array.
+        // https://docs.mongodb.com/manual/reference/operator/update/positional/
         $set: { 'replies.$.reported': true },
       },
       { new: true }

@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const mongoose = require('mongoose');
 const { getBoard } = require('../helpers/getBoard');
 
 const getThreads = async (req, res, next) => {
@@ -32,12 +31,13 @@ const getThreads = async (req, res, next) => {
 
 const createThread = async (req, res, next) => {
   const Board = getBoard(req);
+  const { text, delete_password } = req.body;
   const newBoard = new Board({
-    text: req.body.text,
+    text,
+    delete_password,
     created_on: new Date(),
     bumped_on: new Date(),
     reported: false,
-    delete_password: req.body.delete_password,
     replies: [],
   });
   try {
@@ -51,10 +51,10 @@ const createThread = async (req, res, next) => {
 
 const reportThread = async (req, res, next) => {
   const Board = getBoard(req);
-  const threadId = req.body.report_id;
+  const { report_id } = req.body;
   try {
     const reportedThread = await Board.findByIdAndUpdate(
-      threadId,
+      report_id,
       {
         reported: true,
       },
@@ -74,16 +74,14 @@ const reportThread = async (req, res, next) => {
 };
 
 const deleteThread = async (req, res, next) => {
-  const threadId = req.body.thread_id; // _id of thread
-  const deletePassword = req.body.delete_password;
-  console.log(req.body);
+  const { thread_id, delete_password } = req.body; // _id of thread
 
   const Board = getBoard(req);
   try {
     // https://mongoosejs.com/docs/api.html#model_Model.findOneAndDelete
     const deleted = await Board.findOneAndDelete({
-      _id: threadId, // mongoose wraps id with ObjectID automatically
-      delete_password: deletePassword,
+      _id: thread_id, // mongoose wraps id with ObjectID automatically
+      delete_password,
     });
     if (deleted) {
       res.send('success');
